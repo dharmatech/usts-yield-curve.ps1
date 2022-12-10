@@ -1,4 +1,14 @@
 ﻿
+
+function get-rrp-award-rate ()
+{
+    $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
+
+    $result | ConvertFrom-Csv
+}
+
+$result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
+
 # $result = Invoke-RestMethod 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2022/all?type=daily_treasury_yield_curve&field_tdr_date_value=2022&page&_format=csv'
 
 $year = Get-Date -Format 'yyyy'
@@ -7,6 +17,29 @@ $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-cha
 
 $table = $result | ConvertFrom-Csv | Sort-Object Date
 
+foreach ($row in $table)
+{
+    $row.Date = Get-Date $row.Date -Format 'yyyy-MM-dd'
+}
+
+# foreach ($row in $table)
+# {
+#     '{0} {1}' -f $row.Date, $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].DATE
+# }
+
+foreach ($row in $table)
+{
+    $rrp = $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].RRPONTSYAWARD
+
+    # ([decimal] $row.'RRP').ToString('F'))
+
+    # $row | Add-Member -MemberType NoteProperty -Name RRP -Value $rrp
+
+    $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
+}
+
+# $table[0]
+
 function color ($a, $b)
 {
     if     ($b -gt $a) { 'Green' }
@@ -14,12 +47,17 @@ function color ($a, $b)
     else               { 'White' }
 }
 
-Write-Host 'Date         1 Mo  2 Mo  3 Mo  4 Mo  6 Mo  1 Yr  2 Yr  3 Yr  5 Yr  7 Yr  10 Yr 20 Yr 30 Yr'
+
+#          2022-12-09   3.80  3.81  4.13  4.31  4.54  4.72  4.72  4.33  4.07  3.75  3.69  3.57  3.82  3.56
+$header = 'Date         RRP   1 Mo  2 Mo  3 Mo  4 Mo  6 Mo  1 Yr  2 Yr  3 Yr  5 Yr  7 Yr  10 Yr 20 Yr 30 Yr'
+
+Write-Host $header
 
 foreach ($row in $table | Sort-Object Date)
 {
     Write-Host ('{0} '  -f $row.Date)                                                        -NoNewline
-    Write-Host ('{0,6}'  -f $row.'1 Mo')                                                     -NoNewline
+    Write-Host ('{0,6}'  -f ([decimal] $row.'RRP').ToString('F'))                            -NoNewline
+    Write-Host ('{0,6}'  -f $row.'1 Mo')  -ForegroundColor (color $row.'RRP'  $row.'1 Mo')   -NoNewline
     Write-Host ('{0,6}'  -f $row.'2 Mo')  -ForegroundColor (color $row.'1 Mo'  $row.'2 Mo')  -NoNewline
     Write-Host ('{0,6}'  -f $row.'3 Mo')  -ForegroundColor (color $row.'2 Mo'  $row.'3 Mo')  -NoNewline
     Write-Host ('{0,6}'  -f $row.'4 Mo')  -ForegroundColor (color $row.'3 Mo'  $row.'4 Mo')  -NoNewline
@@ -36,8 +74,7 @@ foreach ($row in $table | Sort-Object Date)
     Write-Host
 }
 
-#           12/09/2022   3.81  4.13  4.31  4.54  4.72  4.72  4.33  4.07  3.75  3.69  3.57  3.82  3.56
-Write-Host 'Date         1 Mo  2 Mo  3 Mo  4 Mo  6 Mo  1 Yr  2 Yr  3 Yr  5 Yr  7 Yr  10 Yr 20 Yr 30 Yr'
+Write-Host $header
 
 # --------------------------------------------------------------------------------
 
@@ -47,11 +84,11 @@ $json = @{
         type = 'line'
         data = @{
             # labels = $table.ForEach({ $_.date })
-            labels = '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
+            labels = 'RRP', '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
             datasets = @(
                 @{
                     label = ('US Treasury Security Yield Curve : ' + $table[-1].Date)
-                    data = $table[-1].'1 Mo', $table[-1].'2 Mo', $table[-1].'3 Mo',  $table[-1].'4 Mo',  $table[-1].'6 Mo',  $table[-1].'1 Yr',  $table[-1].'2 Yr',  $table[-1].'3 Yr',  $table[-1].'5 Yr',  $table[-1].'7 Yr',  $table[-1].'10 Yr', $table[-1].'20 Yr', $table[-1].'30 Yr'
+                    data = $table[-1].'RRP', $table[-1].'1 Mo', $table[-1].'2 Mo', $table[-1].'3 Mo',  $table[-1].'4 Mo',  $table[-1].'6 Mo',  $table[-1].'1 Yr',  $table[-1].'2 Yr',  $table[-1].'3 Yr',  $table[-1].'5 Yr',  $table[-1].'7 Yr',  $table[-1].'10 Yr', $table[-1].'20 Yr', $table[-1].'30 Yr'
                     fill = $false
                 }
             )
