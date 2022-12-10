@@ -12,6 +12,8 @@ $result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
 
 $year = Get-Date -Format 'yyyy'
 
+# $year = 2020
+
 $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)
 
 $table = $result | ConvertFrom-Csv | Sort-Object Date
