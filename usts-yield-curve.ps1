@@ -1,5 +1,4 @@
 ﻿
-
 function get-rrp-award-rate ()
 {
     $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
@@ -30,15 +29,9 @@ foreach ($row in $table)
 foreach ($row in $table)
 {
     $rrp = $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].RRPONTSYAWARD
-
-    # ([decimal] $row.'RRP').ToString('F'))
-
-    # $row | Add-Member -MemberType NoteProperty -Name RRP -Value $rrp
-
+        
     $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
 }
-
-# $table[0]
 
 function color ($a, $b)
 {
@@ -46,7 +39,6 @@ function color ($a, $b)
     elseif ($b -lt $a) { 'Red' }
     else               { 'White' }
 }
-
 
 #          2022-12-09   3.80  3.81  4.13  4.31  4.54  4.72  4.72  4.33  4.07  3.75  3.69  3.57  3.82  3.56
 $header = 'Date         RRP   1 Mo  2 Mo  3 Mo  4 Mo  6 Mo  1 Yr  2 Yr  3 Yr  5 Yr  7 Yr  10 Yr 20 Yr 30 Yr'
@@ -83,7 +75,6 @@ $json = @{
         # type = 'bar'
         type = 'line'
         data = @{
-            # labels = $table.ForEach({ $_.date })
             labels = 'RRP', '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
             datasets = @(
                 @{
@@ -103,7 +94,6 @@ $json = @{
         }
     }
 } | ConvertTo-Json -Depth 100
-
 
 
 $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart/create' -Body $json -ContentType 'application/json'
