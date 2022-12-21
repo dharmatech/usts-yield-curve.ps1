@@ -1,12 +1,13 @@
 ﻿
-# function get-rrp-award-rate ()
-# {
-#     $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
-# 
-#     $result | ConvertFrom-Csv
-# }
-# 
-# $result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
+function get-rrp-award-rate ()
+{
+    $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
+
+    $result | ConvertFrom-Csv
+}
+
+$result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
+# ----------------------------------------------------------------------
 
 # $result = Invoke-RestMethod 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2022/all?type=daily_treasury_yield_curve&field_tdr_date_value=2022&page&_format=csv'
 
