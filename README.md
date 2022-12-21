@@ -10,4 +10,6 @@ Red indicates portions of the curve that are inverted.
 
 A chart of the curve is opened in a browser:
 
-![image](https://user-images.githubusercontent.com/20816/206824284-96fe6102-5267-4102-9f84-cdd2d6fb685e.png)
+![image](https://user-images.githubusercontent.com/20816/208968597-6cfef449-0de5-4a8f-9e99-47812b583670.png)
+
+The horizontal red lines indicate the federal funds target range.
