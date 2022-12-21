@@ -1,14 +1,42 @@
 ﻿
-function get-rrp-award-rate ()
+# function get-rrp-award-rate ()
+# {
+#     $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
+# 
+#     $result | ConvertFrom-Csv
+# }
+# 
+# $result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
+
+# $result = Invoke-RestMethod 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2022/all?type=daily_treasury_yield_curve&field_tdr_date_value=2022&page&_format=csv'
+
+
+# $result_effr = Invoke-RestMethod 'https://markets.newyorkfed.org/api/rates/unsecured/effr/last/10.json'
+
+# $result_effr.refRates[0].targetRateFrom
+# 
+# $result_effr.refRates[0].targetRateTo
+
+# ----------------------------------------------------------------------
+
+function get-fed-funds-upper ()
 {
-    $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
+    $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFEDTARU'
 
     $result | ConvertFrom-Csv
 }
 
-$result_rrp_award_rate = get-rrp-award-rate | Where-Object RRPONTSYAWARD -NE '.'
+function get-fed-funds-lower ()
+{
+    $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFEDTARL'
 
-# $result = Invoke-RestMethod 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2022/all?type=daily_treasury_yield_curve&field_tdr_date_value=2022&page&_format=csv'
+    $result | ConvertFrom-Csv
+}
+
+$fed_funds_upper = get-fed-funds-upper
+$fed_funds_lower = get-fed-funds-lower
+
+# ----------------------------------------------------------------------
 
 $year = Get-Date -Format 'yyyy'
 
@@ -74,7 +102,6 @@ Write-Host $header
 
 $json = @{
     chart = @{
-        # type = 'bar'
         type = 'line'
         data = @{
             labels = 'RRP', '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
@@ -87,16 +114,36 @@ $json = @{
             )
         }
         options = @{
-            scales = @{ }
-            plugins = @{
-                datalabels = @{
-                    display = $true
-                }
+
+            scales = @{ yAxes = @(@{ id = 'Y1' }) }
+
+            annotation = @{
+
+                annotations = @(
+
+                    @{
+                        type = 'line'; mode = 'horizontal'; value = $fed_funds_lower[-1].DFEDTARL; scaleID = 'Y1'; borderColor = 'red'; borderWidth = 1
+                        label = @{
+                            # enabled = $true
+                            # content = 'Fed Funds Lower'
+                            # position = 'end'
+                        }
+                    }
+
+                    @{
+                        type = 'line'; mode = 'horizontal'; value = $fed_funds_upper[-1].DFEDTARU; scaleID = 'Y1'; borderColor = 'red'; borderWidth = 1
+                        label = @{
+                            # enabled = $true
+                            # content = 'Fed Funds Upper'
+                        }
+                    }
+                )
             }
+
+            plugins = @{ datalabels = @{ display = $true } }
         }
     }
 } | ConvertTo-Json -Depth 100
-
 
 $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart/create' -Body $json -ContentType 'application/json'
 
