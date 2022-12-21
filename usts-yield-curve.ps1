@@ -111,6 +111,7 @@ $json = @{
                     label = ('US Treasury Security Yield Curve : ' + $table[-1].Date)
                     data = $table[-1].'RRP', $table[-1].'1 Mo', $table[-1].'2 Mo', $table[-1].'3 Mo',  $table[-1].'4 Mo',  $table[-1].'6 Mo',  $table[-1].'1 Yr',  $table[-1].'2 Yr',  $table[-1].'3 Yr',  $table[-1].'5 Yr',  $table[-1].'7 Yr',  $table[-1].'10 Yr', $table[-1].'20 Yr', $table[-1].'30 Yr'
                     fill = $false
+                    lineTension = 0
                 }
             )
         }
