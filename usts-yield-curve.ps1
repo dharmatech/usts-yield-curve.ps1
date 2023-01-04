@@ -39,7 +39,9 @@ $fed_funds_lower = get-fed-funds-lower
 
 # ----------------------------------------------------------------------
 
-$year = Get-Date -Format 'yyyy'
+# $year = Get-Date -Format 'yyyy'
+
+$year = Get-Date (Get-Date).AddDays(-365) -Format 'yyyy'
 
 # $year = 2020
 
