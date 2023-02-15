@@ -41,9 +41,11 @@ $fed_funds_lower = get-fed-funds-lower
 
 # $year = Get-Date -Format 'yyyy'
 
-$year = Get-Date (Get-Date).AddDays(-365) -Format 'yyyy'
+# $year = Get-Date (Get-Date).AddDays(-365) -Format 'yyyy'
 
 # $year = 2020
+
+$year = 2023
 
 $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)
 
