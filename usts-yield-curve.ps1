@@ -105,6 +105,10 @@ Write-Host $header
 
 # --------------------------------------------------------------------------------
 
+$prev = $table[-21]
+
+$prev_day = $table[-2]
+
 $json = @{
     chart = @{
         type = 'line'
@@ -117,6 +121,21 @@ $json = @{
                     fill = $false
                     lineTension = 0
                 }
+
+                @{
+                    label = ($prev_day.Date)
+                    data = $prev_day.'RRP', $prev_day.'1 Mo', $prev_day.'2 Mo', $prev_day.'3 Mo',  $prev_day.'4 Mo',  $prev_day.'6 Mo',  $prev_day.'1 Yr',  $prev_day.'2 Yr',  $prev_day.'3 Yr',  $prev_day.'5 Yr',  $prev_day.'7 Yr',  $prev_day.'10 Yr', $prev_day.'20 Yr', $prev_day.'30 Yr'
+                    fill = $false
+                    lineTension = 0
+                    hidden = $true
+                }                                
+
+                @{
+                    label = ($prev.Date)
+                    data = $prev.'RRP', $prev.'1 Mo', $prev.'2 Mo', $prev.'3 Mo',  $prev.'4 Mo',  $prev.'6 Mo',  $prev.'1 Yr',  $prev.'2 Yr',  $prev.'3 Yr',  $prev.'5 Yr',  $prev.'7 Yr',  $prev.'10 Yr', $prev.'20 Yr', $prev.'30 Yr'
+                    fill = $false
+                    lineTension = 0
+                }                
             )
         }
         options = @{
