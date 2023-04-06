@@ -177,3 +177,167 @@ $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart
 $id = ([System.Uri] $result_chart.url).Segments[-1]
 
 Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+
+# --------------------------------------------------------------------------------
+
+# $table | Select-Object -First 10 | ft *
+
+# $table.ForEach(
+#     { 
+#         foreach ($i in 0..13)
+#         {
+#             Get-Date (Get-Date $_.Date).AddMinutes(24 / 14 * 60 * $i) -Format 'yyyy-MM-dd HH:mm'
+#         }
+#     }
+# )
+
+# # $table.ForEach({ $_.RRP; $_.'1 Mo' })
+
+# $table.ForEach({ $_.'RRP'; $_.'1 Mo'; $_.'2 Mo'; $_.'3 Mo'; $_.'4 Mo'; $_.'6 Mo'; $_.'1 Yr'; $_.'2 Yr'; $_.'3 Yr'; $_.'5 Yr'; $_.'7 Yr'; $_.'10 Yr'; $_.'20 Yr'; $_.'30 Yr'  })
+
+
+
+
+
+# $json = @{
+#     chart = @{
+#         type = 'line'
+#         data = @{
+#             labels = $table.ForEach(
+#                 { 
+#                     foreach ($i in 0..13)
+#                     {
+#                         Get-Date (Get-Date $_.Date).AddMinutes(24 / 14 * 60 * $i) -Format 'yyyy-MM-dd HH:mm'
+#                     }
+#                 }
+#             )
+
+#             datasets = @(
+#                 @{
+#                     label = ('US Treasury Security Yield Curve : ' + $table[-1].Date)
+#                     data = $table.ForEach({ $_.'RRP'; $_.'1 Mo'; $_.'2 Mo'; $_.'3 Mo'; $_.'4 Mo'; $_.'6 Mo'; $_.'1 Yr'; $_.'2 Yr'; $_.'3 Yr'; $_.'5 Yr'; $_.'7 Yr'; $_.'10 Yr'; $_.'20 Yr'; $_.'30 Yr'  })
+#                     # fill = $false
+#                     # lineTension = 0
+#                 }
+#             )
+#         }
+#         options = @{
+
+#             scales = @{ yAxes = @(@{ id = 'Y1' }) }
+
+#             annotation = @{
+
+#                 annotations = @(
+
+#                     @{
+#                         type = 'line'; mode = 'horizontal'; value = $fed_funds_lower[-1].DFEDTARL; scaleID = 'Y1'; borderColor = 'red'; borderWidth = 1
+#                         label = @{
+#                             # enabled = $true
+#                             # content = 'Fed Funds Lower'
+#                             # position = 'end'
+#                         }
+#                     }
+
+#                     @{
+#                         type = 'line'; mode = 'horizontal'; value = $fed_funds_upper[-1].DFEDTARU; scaleID = 'Y1'; borderColor = 'red'; borderWidth = 1
+#                         label = @{
+#                             # enabled = $true
+#                             # content = 'Fed Funds Upper'
+#                         }
+#                     }
+#                 )
+#             }
+
+#             plugins = @{ datalabels = @{ display = $true } }
+#         }
+#     }
+# } | ConvertTo-Json -Depth 100
+
+# $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart/create' -Body $json -ContentType 'application/json'
+
+# # Start-Process $result_chart.url
+
+# $id = ([System.Uri] $result_chart.url).Segments[-1]
+
+# Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+
+# --------------------------------------------------------------------------------
+
+$table | Select-Object -First 10 | ft *
+
+$json = @{
+    chart = @{
+        # type = 'bar'
+        type = 'line'
+        data = @{
+            labels = $table.ForEach({ $_.Date })
+
+            datasets = @(
+                @{ label = 'RRP';  data = $table.ForEach({ $_.RRP  });                              borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '2 Mo'; data = $table.ForEach({ $_.'2 Mo' })  ; borderColor = '#ffaa00'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '3 Mo'; data = $table.ForEach({ $_.'3 Mo' })  ; borderColor = '#a1a106'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '4 Mo'; data = $table.ForEach({ $_.'4 Mo' })  ; borderColor = '#fac97a'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '6 Mo'; data = $table.ForEach({ $_.'6 Mo' })  ; borderColor = '#00ff00'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '1 Yr'; data = $table.ForEach({ $_.'1 Yr' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '2 Yr'; data = $table.ForEach({ $_.'2 Yr' })  ; borderColor = '#ffaa00'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '3 Yr'; data = $table.ForEach({ $_.'3 Yr' })  ; borderColor = '#a1a106'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '5 Yr'; data = $table.ForEach({ $_.'5 Yr' })  ; borderColor = '#00ff00'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '7 Yr'; data = $table.ForEach({ $_.'7 Yr' })  ; borderColor = '#00ffff'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '10 Yr'; data = $table.ForEach({ $_.'10 Yr' }); borderColor = '#0000ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '20 Yr'; data = $table.ForEach({ $_.'20 Yr' }); borderColor = '#aa00ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '30 Yr'; data = $table.ForEach({ $_.'30 Yr' }); borderColor = '#000000'; borderWidth = 2; fill = $false; pointRadius = 0; }
+            )                        
+
+        }
+        options = @{ 
+
+            # scales = @{
+            #     xAxes = @(@{ stacked = $true })
+            #     yAxes = @(@{ stacked = $true })
+            # }
+
+        }
+    }
+} | ConvertTo-Json -Depth 100
+
+$result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart/create' -Body $json -ContentType 'application/json'
+
+# Start-Process $result_chart.url
+
+$id = ([System.Uri] $result_chart.url).Segments[-1]
+
+Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+
+exit
+# --------------------------------------------------------------------------------
+
+$result_2021 = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f 2021)
+$result_2022 = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f 2022)
+$result_2023 = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f 2023)
+
+# $result_2022 | ConvertFrom-Csv | Select-Object -First 20 | ft *
+
+# $table_alt = $result_2022 + $result_2023 | ConvertFrom-Csv
+
+$table_alt = ($result_2021 | ConvertFrom-Csv) + ($result_2022 | ConvertFrom-Csv) + ($result_2023 | ConvertFrom-Csv)
+
+foreach ($row in $table_alt)
+{
+    $row.Date = Get-Date $row.Date -Format 'yyyy-MM-dd'
+}
+
+$table_alt = $table_alt | Sort-Object Date
+
+# $table_alt | Sort-Object Date | Select-Object -First 10 | ft *
+
+foreach ($row in $table_alt)
+{
+    $rrp = $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].RRPONTSYAWARD
+        
+    $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
+}
+
+$table_alt | Select-Object -First 10 | ft *
+
+$table = $table_alt
