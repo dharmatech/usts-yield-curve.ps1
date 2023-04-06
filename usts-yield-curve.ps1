@@ -1,4 +1,13 @@
 ﻿
+Param([string[]] $years)
+
+if ($years -eq $null)
+{
+    $years = @(Get-Date -Format 'yyyy')
+}
+
+# ----------------------------------------------------------------------
+
 function get-rrp-award-rate ()
 {
     $result = Invoke-RestMethod 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=RRPONTSYAWARD'
@@ -39,27 +48,25 @@ $fed_funds_lower = get-fed-funds-lower
 
 # ----------------------------------------------------------------------
 
-# $year = Get-Date -Format 'yyyy'
+$table = @()
 
-# $year = Get-Date (Get-Date).AddDays(-365) -Format 'yyyy'
+foreach ($year in $years)
+{
+    Write-Host "Retrieving year $year..." -ForegroundColor Yellow -NoNewline
 
-# $year = 2020
+    $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)    
 
-$year = 2023
+    Write-Host 'done'
 
-$result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)
-
-$table = $result | ConvertFrom-Csv | Sort-Object Date
+    $table = $table + ($result | ConvertFrom-Csv)
+}
 
 foreach ($row in $table)
 {
     $row.Date = Get-Date $row.Date -Format 'yyyy-MM-dd'
 }
 
-# foreach ($row in $table)
-# {
-#     '{0} {1}' -f $row.Date, $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].DATE
-# }
+$table = $table | Sort-Object Date
 
 foreach ($row in $table)
 {
@@ -67,7 +74,40 @@ foreach ($row in $table)
         
     $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
 }
+# ----------------------------------------------------------------------
 
+# $table | Sort-Object Date | Select-Object -First 10 | ft *
+
+
+# # $year = Get-Date -Format 'yyyy'
+
+# # $year = Get-Date (Get-Date).AddDays(-365) -Format 'yyyy'
+
+# # $year = 2020
+
+# $year = 2023
+
+# $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)
+
+# $table = $result | ConvertFrom-Csv | Sort-Object Date
+
+# foreach ($row in $table)
+# {
+#     $row.Date = Get-Date $row.Date -Format 'yyyy-MM-dd'
+# }
+
+# # foreach ($row in $table)
+# # {
+# #     '{0} {1}' -f $row.Date, $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].DATE
+# # }
+
+# foreach ($row in $table)
+# {
+#     $rrp = $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].RRPONTSYAWARD
+        
+#     $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
+# }
+# ----------------------------------------------------------------------
 function color ($a, $b)
 {
     if     ($b -gt $a) { 'Green' }
@@ -263,7 +303,7 @@ Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
 
 # --------------------------------------------------------------------------------
 
-$table | Select-Object -First 10 | ft *
+# $table | Select-Object -First 10 | ft *
 
 $json = @{
     chart = @{
@@ -274,7 +314,7 @@ $json = @{
 
             datasets = @(
                 @{ label = 'RRP';  data = $table.ForEach({ $_.RRP  });                              borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $true ; pointRadius = 0; borderDash = @(5, 5) }
                 @{ label = '2 Mo'; data = $table.ForEach({ $_.'2 Mo' })  ; borderColor = '#ffaa00'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
                 @{ label = '3 Mo'; data = $table.ForEach({ $_.'3 Mo' })  ; borderColor = '#a1a106'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
                 @{ label = '4 Mo'; data = $table.ForEach({ $_.'4 Mo' })  ; borderColor = '#fac97a'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
@@ -291,6 +331,8 @@ $json = @{
 
         }
         options = @{ 
+
+            title = @{ display = $true; text = 'Daily U.S. Treasury Par Yield Curve Rates: ' + ($years -join ', ') }
 
             # scales = @{
             #     xAxes = @(@{ stacked = $true })
@@ -311,6 +353,46 @@ Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
 
 exit
 # --------------------------------------------------------------------------------
+
+.\usts-yield-curve.ps1 -years 2021, 2022, 2023
+.\usts-yield-curve.ps1 -years 2022, 2023
+.\usts-yield-curve.ps1 -years 2023
+
+# --------------------------------------------------------------------------------
+$table = @()
+
+foreach ($year in $years)
+{
+    Write-Host "Retrieving year $year..." -ForegroundColor Yellow -NoNewline
+
+    $result = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f $year)    
+
+    Write-Host 'done'
+
+    $table = $table + ($result | ConvertFrom-Csv)
+}
+
+foreach ($row in $table)
+{
+    $row.Date = Get-Date $row.Date -Format 'yyyy-MM-dd'
+}
+
+$table = $table | Sort-Object Date
+
+# $table_alt | Sort-Object Date | Select-Object -First 10 | ft *
+
+foreach ($row in $table)
+{
+    $rrp = $result_rrp_award_rate.Where({ $_.DATE -le $row.Date }, 'Last')[0].RRPONTSYAWARD
+        
+    $row | Add-Member -MemberType NoteProperty -Name RRP -Value ([decimal] $rrp).ToString('F')
+}
+
+$table | Select-Object -First 10 | ft *
+
+
+
+
 
 $result_2021 = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f 2021)
 $result_2022 = Invoke-RestMethod ('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{0}/all?type=daily_treasury_yield_curve&field_tdr_date_value={0}&page&_format=csv' -f 2022)
