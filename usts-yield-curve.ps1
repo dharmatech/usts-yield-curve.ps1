@@ -154,13 +154,13 @@ $json = @{
         type = 'line'
         data = @{
             labels = 'RRP', '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
-            datasets = @(
+            datasets = @(                
                 @{
-                    label = ('US Treasury Security Yield Curve : ' + $table[-1].Date)
-                    data = $table[-1].'RRP', $table[-1].'1 Mo', $table[-1].'2 Mo', $table[-1].'3 Mo',  $table[-1].'4 Mo',  $table[-1].'6 Mo',  $table[-1].'1 Yr',  $table[-1].'2 Yr',  $table[-1].'3 Yr',  $table[-1].'5 Yr',  $table[-1].'7 Yr',  $table[-1].'10 Yr', $table[-1].'20 Yr', $table[-1].'30 Yr'
+                    label = ($prev.Date)
+                    data = $prev.'RRP', $prev.'1 Mo', $prev.'2 Mo', $prev.'3 Mo',  $prev.'4 Mo',  $prev.'6 Mo',  $prev.'1 Yr',  $prev.'2 Yr',  $prev.'3 Yr',  $prev.'5 Yr',  $prev.'7 Yr',  $prev.'10 Yr', $prev.'20 Yr', $prev.'30 Yr'
                     fill = $false
                     lineTension = 0
-                }
+                }                
 
                 @{
                     label = ($prev_day.Date)
@@ -168,17 +168,19 @@ $json = @{
                     fill = $false
                     lineTension = 0
                     hidden = $true
-                }                                
-
+                }        
+                
                 @{
-                    label = ($prev.Date)
-                    data = $prev.'RRP', $prev.'1 Mo', $prev.'2 Mo', $prev.'3 Mo',  $prev.'4 Mo',  $prev.'6 Mo',  $prev.'1 Yr',  $prev.'2 Yr',  $prev.'3 Yr',  $prev.'5 Yr',  $prev.'7 Yr',  $prev.'10 Yr', $prev.'20 Yr', $prev.'30 Yr'
+                    label = ($table[-1].Date)
+                    data = $table[-1].'RRP', $table[-1].'1 Mo', $table[-1].'2 Mo', $table[-1].'3 Mo',  $table[-1].'4 Mo',  $table[-1].'6 Mo',  $table[-1].'1 Yr',  $table[-1].'2 Yr',  $table[-1].'3 Yr',  $table[-1].'5 Yr',  $table[-1].'7 Yr',  $table[-1].'10 Yr', $table[-1].'20 Yr', $table[-1].'30 Yr'
                     fill = $false
                     lineTension = 0
                 }                
             )
         }
         options = @{
+
+            title = @{ display = $true; text = 'US Treasury Security Yield Curve' }
 
             scales = @{ yAxes = @(@{ id = 'Y1' }) }
 
