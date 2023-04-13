@@ -328,7 +328,7 @@ $json = @{
                 @{ label = '7 Yr'; data = $table.ForEach({ $_.'7 Yr' })  ; borderColor = '#00ffff'; borderWidth = 2; fill = $false; pointRadius = 0; }
                 @{ label = '10 Yr'; data = $table.ForEach({ $_.'10 Yr' }); borderColor = '#0000ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
                 @{ label = '20 Yr'; data = $table.ForEach({ $_.'20 Yr' }); borderColor = '#aa00ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '30 Yr'; data = $table.ForEach({ $_.'30 Yr' }); borderColor = '#000000'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '30 Yr'; data = $table.ForEach({ $_.'30 Yr' }); borderColor = '#000000'; borderWidth = 2; fill = $false;  pointRadius = 0; }
             )                        
 
         }
