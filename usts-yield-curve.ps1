@@ -220,6 +220,8 @@ $id = ([System.Uri] $result_chart.url).Segments[-1]
 
 Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
 
+exit
+
 # --------------------------------------------------------------------------------
 
 # $table | Select-Object -First 10 | ft *
@@ -307,6 +309,8 @@ Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
 
 # $table | Select-Object -First 10 | ft *
 
+
+
 $json = @{
     chart = @{
         # type = 'bar'
@@ -315,19 +319,19 @@ $json = @{
             labels = $table.ForEach({ $_.Date })
 
             datasets = @(
-                @{ label = 'RRP';  data = $table.ForEach({ $_.RRP  });                              borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $true ; pointRadius = 0; borderDash = @(5, 5) }
-                @{ label = '2 Mo'; data = $table.ForEach({ $_.'2 Mo' })  ; borderColor = '#ffaa00'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
-                @{ label = '3 Mo'; data = $table.ForEach({ $_.'3 Mo' })  ; borderColor = '#a1a106'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
-                @{ label = '4 Mo'; data = $table.ForEach({ $_.'4 Mo' })  ; borderColor = '#fac97a'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
-                @{ label = '6 Mo'; data = $table.ForEach({ $_.'6 Mo' })  ; borderColor = '#00ff00'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
-                @{ label = '1 Yr'; data = $table.ForEach({ $_.'1 Yr' })  ; borderColor = '#ff0000'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '2 Yr'; data = $table.ForEach({ $_.'2 Yr' })  ; borderColor = '#ffaa00'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '3 Yr'; data = $table.ForEach({ $_.'3 Yr' })  ; borderColor = '#a1a106'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '5 Yr'; data = $table.ForEach({ $_.'5 Yr' })  ; borderColor = '#00ff00'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '7 Yr'; data = $table.ForEach({ $_.'7 Yr' })  ; borderColor = '#00ffff'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '10 Yr'; data = $table.ForEach({ $_.'10 Yr' }); borderColor = '#0000ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
-                @{ label = '20 Yr'; data = $table.ForEach({ $_.'20 Yr' }); borderColor = '#aa00ff'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = 'RRP';  data = $table.ForEach({ $_.RRP    })  ; borderColor = '#4E79A7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#E15759'; borderWidth = 2; fill = $true ; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '2 Mo'; data = $table.ForEach({ $_.'2 Mo' })  ; borderColor = '#F28E2B'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '3 Mo'; data = $table.ForEach({ $_.'3 Mo' })  ; borderColor = '#76B7B2'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '4 Mo'; data = $table.ForEach({ $_.'4 Mo' })  ; borderColor = '#59A14F'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '6 Mo'; data = $table.ForEach({ $_.'6 Mo' })  ; borderColor = '#EDC948'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '1 Yr'; data = $table.ForEach({ $_.'1 Yr' })  ; borderColor = '#B07AA1'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '2 Yr'; data = $table.ForEach({ $_.'2 Yr' })  ; borderColor = '#FF9DA7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '3 Yr'; data = $table.ForEach({ $_.'3 Yr' })  ; borderColor = '#9C755F'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '5 Yr'; data = $table.ForEach({ $_.'5 Yr' })  ; borderColor = '#BAB0AC'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '7 Yr'; data = $table.ForEach({ $_.'7 Yr' })  ; borderColor = '#4E79A7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '10 Yr'; data = $table.ForEach({ $_.'10 Yr' }); borderColor = '#F28E2B'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '20 Yr'; data = $table.ForEach({ $_.'20 Yr' }); borderColor = '#E15759'; borderWidth = 2; fill = $false; pointRadius = 0; }
                 @{ label = '30 Yr'; data = $table.ForEach({ $_.'30 Yr' }); borderColor = '#000000'; borderWidth = 2; fill = $false;  pointRadius = 0; }
             )                        
 
@@ -352,12 +356,59 @@ $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart
 $id = ([System.Uri] $result_chart.url).Segments[-1]
 
 Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+# --------------------------------------------------------------------------------
+$json = @{
+    chart = @{
+        type = 'bar'
+        # type = 'line'
+        data = @{
+            labels = $table.ForEach({ $_.Date })
 
+            datasets = @(
+                @{ label = 'RRP';  data = $table.ForEach({ $_.RRP    })  ; borderColor = '#4E79A7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '1 Mo'; data = $table.ForEach({ $_.'1 Mo' })  ; borderColor = '#F28E2B'; borderWidth = 2; fill = $true ; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '2 Mo'; data = $table.ForEach({ $_.'2 Mo' })  ; borderColor = '#E15759'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '3 Mo'; data = $table.ForEach({ $_.'3 Mo' })  ; borderColor = '#76B7B2'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '4 Mo'; data = $table.ForEach({ $_.'4 Mo' })  ; borderColor = '#59A14F'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '6 Mo'; data = $table.ForEach({ $_.'6 Mo' })  ; borderColor = '#EDC948'; borderWidth = 2; fill = $false; pointRadius = 0; borderDash = @(5, 5) }
+                @{ label = '1 Yr'; data = $table.ForEach({ $_.'1 Yr' })  ; borderColor = '#B07AA1'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '2 Yr'; data = $table.ForEach({ $_.'2 Yr' })  ; borderColor = '#FF9DA7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '3 Yr'; data = $table.ForEach({ $_.'3 Yr' })  ; borderColor = '#9C755F'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '5 Yr'; data = $table.ForEach({ $_.'5 Yr' })  ; borderColor = '#BAB0AC'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '7 Yr'; data = $table.ForEach({ $_.'7 Yr' })  ; borderColor = '#4E79A7'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '10 Yr'; data = $table.ForEach({ $_.'10 Yr' }); borderColor = '#F28E2B'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '20 Yr'; data = $table.ForEach({ $_.'20 Yr' }); borderColor = '#E15759'; borderWidth = 2; fill = $false; pointRadius = 0; }
+                @{ label = '30 Yr'; data = $table.ForEach({ $_.'30 Yr' }); borderColor = '#76B7B2'; borderWidth = 2; fill = $false;  pointRadius = 0; }
+            )                        
+
+        }
+        options = @{ 
+
+            title = @{ display = $true; text = 'Daily U.S. Treasury Par Yield Curve Rates: ' + ($years -join ', ') }
+
+            scales = @{
+                xAxes = @(@{ stacked = $true })
+                yAxes = @(@{ stacked = $true })
+            }
+
+        }
+    }
+} | ConvertTo-Json -Depth 100
+
+$result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart/create' -Body $json -ContentType 'application/json'
+
+# Start-Process $result_chart.url
+
+$id = ([System.Uri] $result_chart.url).Segments[-1]
+
+Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+# --------------------------------------------------------------------------------
 exit
 # --------------------------------------------------------------------------------
-
+.\usts-yield-curve.ps1 -years 2021
 .\usts-yield-curve.ps1 -years 2021, 2022, 2023
 .\usts-yield-curve.ps1 -years 2022, 2023
+.\usts-yield-curve.ps1 -years 2022
 .\usts-yield-curve.ps1 -years 2023
 
 # --------------------------------------------------------------------------------
