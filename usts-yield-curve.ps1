@@ -145,6 +145,20 @@ Write-Host $header
 
 # --------------------------------------------------------------------------------
 
+function dataset ($n)
+{
+    @{
+        label = ($table[$n].Date)
+        data = $table[$n].'RRP', $table[$n].'1 Mo', $table[$n].'2 Mo', $table[$n].'3 Mo',  $table[$n].'4 Mo',  $table[$n].'6 Mo',  $table[$n].'1 Yr',  $table[$n].'2 Yr',  $table[$n].'3 Yr',  $table[$n].'5 Yr',  $table[$n].'7 Yr',  $table[$n].'10 Yr', $table[$n].'20 Yr', $table[$n].'30 Yr'
+        fill = $false
+        lineTension = 0
+        hidden = $true
+    }                    
+}
+
+
+
+
 $prev = $table[-21]
 
 $prev_day = $table[-2]
@@ -155,6 +169,12 @@ $json = @{
         data = @{
             labels = 'RRP', '1 Mo', '2 Mo',  '3 Mo',  '4 Mo',  '6 Mo',  '1 Yr',  '2 Yr',  '3 Yr',  '5 Yr',  '7 Yr',  '10 Yr', '20 Yr', '30 Yr'
             datasets = @(                
+
+                (dataset -100)
+                (dataset -80)
+                (dataset -60)
+                (dataset -40)
+
                 @{
                     label = ($prev.Date)
                     data = $prev.'RRP', $prev.'1 Mo', $prev.'2 Mo', $prev.'3 Mo',  $prev.'4 Mo',  $prev.'6 Mo',  $prev.'1 Yr',  $prev.'2 Yr',  $prev.'3 Yr',  $prev.'5 Yr',  $prev.'7 Yr',  $prev.'10 Yr', $prev.'20 Yr', $prev.'30 Yr'
@@ -176,6 +196,8 @@ $json = @{
                     fill = $false
                     lineTension = 0
                 }                
+
+                
             )
         }
         options = @{
@@ -183,6 +205,8 @@ $json = @{
             title = @{ display = $true; text = 'US Treasury Security Yield Curve' }
 
             scales = @{ yAxes = @(@{ id = 'Y1' }) }
+
+            legend = @{ position = 'left' }
 
             annotation = @{
 
