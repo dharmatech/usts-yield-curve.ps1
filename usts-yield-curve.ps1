@@ -1,5 +1,5 @@
 ﻿
-Param([string[]] $years)
+Param([string[]] $years, [switch]$display_chart_url, [switch]$save_iframe)
 
 if ($years -eq $null)
 {
@@ -180,6 +180,7 @@ $json = @{
                     data = $prev.'RRP', $prev.'1 Mo', $prev.'2 Mo', $prev.'3 Mo',  $prev.'4 Mo',  $prev.'6 Mo',  $prev.'1 Yr',  $prev.'2 Yr',  $prev.'3 Yr',  $prev.'5 Yr',  $prev.'7 Yr',  $prev.'10 Yr', $prev.'20 Yr', $prev.'30 Yr'
                     fill = $false
                     lineTension = 0
+                    hidden = $true
                 }                
 
                 @{
@@ -187,7 +188,6 @@ $json = @{
                     data = $prev_day.'RRP', $prev_day.'1 Mo', $prev_day.'2 Mo', $prev_day.'3 Mo',  $prev_day.'4 Mo',  $prev_day.'6 Mo',  $prev_day.'1 Yr',  $prev_day.'2 Yr',  $prev_day.'3 Yr',  $prev_day.'5 Yr',  $prev_day.'7 Yr',  $prev_day.'10 Yr', $prev_day.'20 Yr', $prev_day.'30 Yr'
                     fill = $false
                     lineTension = 0
-                    hidden = $true
                 }        
                 
                 @{
@@ -242,10 +242,39 @@ $result_chart = Invoke-RestMethod -Method Post -Uri 'https://quickchart.io/chart
 
 $id = ([System.Uri] $result_chart.url).Segments[-1]
 
-Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+if ($display_chart_url)
+{
+    Write-Host
 
+    Write-Host ('https://quickchart.io/chart-maker/view/{0}' -f $id) -ForegroundColor Yellow
+}
+else
+{
+    Start-Process ('https://quickchart.io/chart-maker/view/{0}' -f $id)
+}
+# --------------------------------------------------------------------------------
+
+$html_template = @"
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{0}</title>
+    </head>
+    <body>
+        <div style="padding-bottom: 56.25%; position: relative; display:block; width: 100%;">
+            <iframe width="100%" height="100%" src="https://quickchart.io/chart-maker/view/{1}" frameborder="0" style="position: absolute; top:0; left: 0"></iframe>
+        </div>
+    </body>
+</html>
+"@
+
+if ($save_iframe)
+{
+    $html_template -f 'US Treasury Security Yield Curve', $id > usts-yield-curve.html
+}
+
+# --------------------------------------------------------------------------------
 exit
-
 # --------------------------------------------------------------------------------
 
 # $table | Select-Object -First 10 | ft *
